@@ -72,6 +72,8 @@ main() {
     eval "$colors"
   fi
 
+  left_fg=${white:-$dark_gray}
+
   # Set transparency variables - Colors and window dividers
   if $transparent_powerline_bg; then
 	bg_color="default"
@@ -176,13 +178,13 @@ main() {
   # Status left
   if $show_powerline; then
     if $show_edge_icons; then
-      tmux set-option -g status-left "#[bg=${bg_color}]#[fg=${green}]#[bold]#{?client_prefix,#[fg=${yellow}],}${show_right_sep}#[bg=${green}]#[fg=${dark_gray}]#{?client_prefix,#[bg=${yellow}],} ${left_icon} #[fg=${green}]#[bg=${bg_color}]#{?client_prefix,#[fg=${yellow}],}${left_sep} "
+      tmux set-option -g status-left "#[bg=${bg_color}]#[fg=${green}]#[bold]#[italics]#{?client_prefix,#[fg=${yellow}],}${show_right_sep}#[bg=${green}]#[fg=${left_fg}]#{?client_prefix,#[fg=${yellow}],} ${left_icon} #[fg=${green}]#[bg=${bg_color}]#{?client_prefix,#[fg=${yellow}],}${left_sep} "
     else
-      tmux set-option -g status-left "#[bg=${dark_gray}]#[fg=${green}]#[bg=${green}]#[fg=${dark_gray}]#{?client_prefix,#[bg=${yellow}],} ${left_icon} #[fg=${green}]#[bg=${bg_color}]#{?client_prefix,#[fg=${yellow}],}${left_sep}"
+      tmux set-option -g status-left "#[bg=${left_fg}]#[fg=${green}]#[bold]#[italics]#[bg=${green}]#[fg=${left_fg}]#{?client_prefix,#[bg=${yellow}],} ${left_icon} #[fg=${green}]#[bg=${bg_color}]#{?client_prefix,#[fg=${yellow}],}${left_sep}"
     fi
     powerbg=${bg_color}
   else
-    tmux set-option -g status-left "#[bg=${green}]#[fg=${dark_gray}]#{?client_prefix,#[bg=${yellow}],} ${left_icon}"
+    tmux set-option -g status-left "#[bg=${green}]#[fg=${left_fg}]#[bold]#[italics]#{?client_prefix,#[bg=${yellow}],} ${left_icon}"
   fi
 
   # Status right
