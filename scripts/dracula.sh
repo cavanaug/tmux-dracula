@@ -189,6 +189,7 @@ main() {
   tmux set-option -g status-right ""
 
   for plugin in "${plugins[@]}"; do
+    empty_check='#{==:$script,}'
 
     if case $plugin in custom:*) true;; *) false;; esac; then
       script=${plugin#"custom:"}
@@ -342,6 +343,7 @@ main() {
     elif [ $plugin = "ssh-session" ]; then
       IFS=' ' read -r -a colors <<< $(get_tmux_option "@dracula-ssh-session-colors" "green dark_gray")
       script="#($current_dir/ssh_session.sh $show_ssh_session_port)"
+      empty_check="#{==:#($current_dir/ssh_session.sh $show_ssh_session_port),}"
 
     elif [ $plugin = "network-public-ip" ]; then
       IFS=' ' read -r -a colors <<<$(get_tmux_option "@dracula-network-public-ip-colors" "cyan dark_gray")
@@ -376,16 +378,16 @@ main() {
 
     if $show_powerline; then
       if $show_empty_plugins; then
-        tmux set-option -ga status-right " #[fg=${!colors[0]}]#[bg=${background_color}]#[nobold]#[nounderscore]#[noitalics]${right_sep}#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script$right_edge_icon"
+        tmux set-option -ga status-right "#{?${empty_check},, #[fg=${!colors[0]}]#[bg=${background_color}]#[nobold]#[nounderscore]#[noitalics]${right_sep}#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script$right_edge_icon}"
       else
-        tmux set-option -ga status-right "#{?#{==:$script,},,#[fg=${!colors[0]}]#[nobold]#[nounderscore]#[noitalics]${right_sep}#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script$right_edge_icon}"
+        tmux set-option -ga status-right "#{?${empty_check},,#[fg=${!colors[0]}]#[nobold]#[nounderscore]#[noitalics]${right_sep}#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script$right_edge_icon}"
     fi
       powerbg=${!colors[0]}
     else
       if $show_empty_plugins; then
-        tmux set-option -ga status-right "#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script"
+        tmux set-option -ga status-right "#{?${empty_check},,#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script}"
       else
-        tmux set-option -ga status-right "#{?#{==:$script,},,#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script}"
+        tmux set-option -ga status-right "#{?${empty_check},,#[fg=${!colors[1]}]#[bg=${!colors[0]}]$pad_script}"
       fi
     fi
 
